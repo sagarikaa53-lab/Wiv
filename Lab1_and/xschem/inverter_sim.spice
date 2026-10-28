@@ -1,0 +1,18 @@
+
+* CMOS inverter transient simulation
+.lib "/usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+
+.include "/home/Sagarikaa1/Lab1_and/xschem/netlist/inverterr.spice"
+
+VDD vdd 0 DC 1.8
+VIN in 0 PULSE(0 1.8 0 100p 100p 10n 20n)
+
+XINV vdd out in 0 inverterr
+
+.control
+tran 100p 40n
+plot v(in) v(out)
+.endc
+
+.end
+

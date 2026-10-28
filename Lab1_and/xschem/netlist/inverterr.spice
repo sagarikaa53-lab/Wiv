@@ -1,0 +1,11 @@
+** sch_path: /home/Sagarikaa1/Lab1_and/xschem/inverterr.sch
+.subckt inverterr vdd out in vss
+*.ipin in
+*.iopin vss
+*.opin out
+*.iopin vdd
+XM1 out in vss vss sky130_fd_pr__nfet_01v8 L=0.18 W=4.5 nf=3 ad=0.87 as=0.87 pd=7.16 ps=7.16 nrd=0.0644444444444444
++ nrs=0.0644444444444444 sa=0 sb=0 sd=0 mult=1
+XM2 out in vdd vdd sky130_fd_pr__pfet_01v8 L=0.18 W=3 nf=3 ad=0.58 as=0.58 pd=5.16 ps=5.16 nrd=0.0966666666666667
++ nrs=0.0966666666666667 sa=0 sb=0 sd=0 mult=1
+.ends inverterr
