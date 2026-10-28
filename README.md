@@ -40,7 +40,7 @@ This table should be updated as work is verified.
 | Ubuntu / WSL environment setup | In progress / environment-dependent |
 | Xschem and SKY130 library configuration | In progress |
 | SPICE netlist generation | Add result after checking the generated file |
-| ngspice simulation | Pending verified run and waveform |
+| ngspice simulation | verified run and waveform |
 | Magic layout and DRC | Pending |
 | Netgen LVS comparison | Pending |
 | OpenLane setup | Not yet verified |
