@@ -1,0 +1,19 @@
+* NGSPICE file created from inverterr.ext - technology: sky130A
+
+.subckt sky130_fd_pr__nfet_01v8_KBZXWL B D0 G0 S1 G1 D2 S2 G2
+X0 S2 G2 D2 B sky130_fd_pr__nfet_01v8 ad=0.4425 pd=3.59 as=0.225 ps=1.8 w=1.5 l=0.18
+X1 S1 G0 D0 B sky130_fd_pr__nfet_01v8 ad=0.225 pd=1.8 as=0.4425 ps=3.59 w=1.5 l=0.18
+X2 D2 G1 S1 B sky130_fd_pr__nfet_01v8 ad=0.225 pd=1.8 as=0.225 ps=1.8 w=1.5 l=0.18
+.ends
+
+.subckt sky130_fd_pr__pfet_01v8_EBFWLH B D0 G0 S1 G1 D2 S2 G2
+X0 D2 G1 S1 B sky130_fd_pr__pfet_01v8 ad=0.15 pd=1.3 as=0.15 ps=1.3 w=1 l=0.18
+X1 S2 G2 D2 B sky130_fd_pr__pfet_01v8 ad=0.295 pd=2.59 as=0.15 ps=1.3 w=1 l=0.18
+X2 S1 G0 D0 B sky130_fd_pr__pfet_01v8 ad=0.15 pd=1.3 as=0.295 ps=2.59 w=1 l=0.18
+.ends
+
+.subckt inverterr vdd out in vss
+XXM1 vss out in vss in out vss in sky130_fd_pr__nfet_01v8_KBZXWL
+XXM2 vdd vdd in out in vdd out in sky130_fd_pr__pfet_01v8_EBFWLH
+.ends
+
