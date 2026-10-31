@@ -449,10 +449,10 @@ Example command pattern:
 
 ```bash
 netgen -batch lvs \
-  "../mag/inverter_1.spice inverter_1" \
-  "../xschem/inverter_1.spice inverter_1" \
-  "$PDK_ROOT/sky130A/libs.tech/netgen/sky130A_setup.tcl" \
-  /tmp/inverter_1_lvs.log
+  "/home/Sagarikaa1/Lab1_and/mag/inverterr.spice inverterr" \
+  "/home/Sagarikaa1/Lab1_and/xschem/netlist/inverterr.spice inverterr" \
+  /home/Sagarikaa1/Lab1_and/netgen/sky130A_setup.tcl \
+  /tmp/inverterr_lvs.log
 ```
 
 The filenames and subcircuit names above are examples: change them to match the actual extracted layout netlist and Xschem reference netlist. The layout netlist must be compared with the schematic netlist, not with a testbench netlist.
