@@ -90,9 +90,8 @@ Archive the completed results, reports, and project files in Git
 - [Chapter 4 - LVS](#chapter-4---lvs)
   - [Layout extraction](#layout-extraction)
   - [Running LVS with Netgen](#running-lvs-with-netgen)
-  - [Post-layout simulation](#post-layout-simulation)
+  - [Pre-layout vs Post-layout simulation](#pre-layout-vs-post-layout-simulation)
   - [Observations and key learnings](#observations-and-key-learnings)
-- [Repository structure](#repository-structure)
 - [References](#references)
 
 ---
@@ -100,7 +99,7 @@ Archive the completed results, reports, and project files in Git
 ## Chapter 0 - Getting the tools
 
 ### 0.1 Development environment
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 - **Host OS:** Windows 11
 - **Linux environment:** Ubuntu through WSL (not a traditional virtual machine)
 - **PDK root:** `/usr/local/share/pdk`
@@ -121,7 +120,7 @@ nproc
 
 
 ### 0.2 Tools used
-
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool | Purpose |
 |---|---|
 | Ubuntu on WSL | Linux environment on Windows 11 |
@@ -133,7 +132,7 @@ nproc
 | Git | Version control and repository management |
 
 ### 0.3 Installing and verifying the tools
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 #### Update Ubuntu and install dependencies
 
 ```bash
@@ -155,13 +154,13 @@ git --version
 <img width="887" height="192" alt="image" src="https://github.com/user-attachments/assets/2d94b784-c98d-40c2-a5c7-30434f0d391c" />
 
 #### 0.4 Install and verify the EDA tools
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 Use the package manager where the available version meets your needs. If a tool is already installed and working, verify it rather than reinstalling it unnecessarily.
 
 
 
 **Magic VLSI**
-
+----------------
 ```bash
 $  git clone git://opencircuitdesign.com/magic
 $  cd magic
@@ -175,7 +174,7 @@ verify magic
 
 
 **Xschem**
-
+------------
 ```bash
 $  git clone https://github.com/StefanSchippers/xschem.git xschem_git
 $	./configure
@@ -188,7 +187,7 @@ verify xschem
 
 
 **ngspice**
-
+--------------
 ```bash
 sudo apt install -y ngspice
 ngspice --version
@@ -199,7 +198,7 @@ verify ngspice
 
 
 **Netgen**
-
+----------------
 ```bash
 $  git clone git://opencircuitdesign.com/netgen
 $  cd netgen
@@ -213,7 +212,7 @@ verify netgen
 
 
 **SKY130PDK**
-
+--------------------
 ```bash
 $  git clone git://opencircuitdesign.com/open_pdks
 $  open_pdks
@@ -239,8 +238,8 @@ Source-build instructions and dependencies may vary by release; use the relevant
 
 
 
-### SKY130A PDK setup and integration
-
+### 0.5 SKY130A PDK setup and integration
+-------------------------------------------------------------------------------------------------------------
 #### Check the SKY130A PDK
 
 ```bash
@@ -282,11 +281,11 @@ Inside Magic, the technology should load as SKY130A. If Magic falls back to the 
 
 
 
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 ## Chapter 1 - Understanding the design flow
 
 ### 1.1 SKY130A PDK and physical layers
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 The SKY130A PDK provides technology files, transistor models, device libraries, and design rules for implementing and checking integrated circuits in a 130 nm CMOS process. The project uses SKY130A NFET and PFET devices to implement a CMOS inverter.
 
 - **SPICE models:** describe transistor electrical behaviour during simulation.
@@ -296,7 +295,7 @@ The SKY130A PDK provides technology files, transistor models, device libraries, 
 - **Physical layers:** diffusion, wells, polysilicon, contacts, local interconnect, metal layers, and vias form devices and interconnections.
 
 ### 1.2 CMOS inverter design
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 The CMOS inverter uses an NFET pull-down device and a PFET pull-up device. Both gates share the input, both drains form the output, the NFET source/body connect to VSS, and the PFET source/body connect to VDD.
 
 | Parameter | NFET | PFET |
@@ -316,7 +315,7 @@ Expected logic:
 
 
 ### 1.3 Inverter schematic  using xschem
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 ```bash
 cd ~/Lab1_and/xschem
 xschem inverterr.sch
@@ -341,7 +340,7 @@ find . -name '*.spice' -o -name '*.cir'
 <img width="1920" height="1080" alt="Screenshot (1483)" src="https://github.com/user-attachments/assets/495e4da1-a616-4464-8b3f-9f52381cff74" />
 
 ### 1.4 Pre-layout simulation with ngspice
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 Create a testbench that instantiates the inverter subcircuit, supplies the required power voltage, and applies a pulse input. Include the SKY130A model library and the generated schematic netlist using paths that match your project.
 
 A typical testbench contains these elements:
@@ -374,7 +373,7 @@ The expected waveform has the output switching opposite to the input.
 
 
 ### 1.5 Physical layout with Magic
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 Launch Magic with the SKY130A technology configuration and create the inverter layout using the corresponding technology layers. Place the NFET and PFET, route the input/output and supply connections, and connect all diffusion strips of the multi-finger devices correctly.
 
 ```bash
@@ -389,21 +388,23 @@ The layout should implement the same electrical connections as the schematic. A 
 
 
 
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 ## Chapter 2 - DRC and LVS Fundamentals
 
 ### 2.1 Design Rule Checking
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 Design Rule Checking (DRC) checks the physical layout geometry against rules defined by the selected process technology. These rules include spacing, width, enclosure, overlap, and layer-specific constraints. DRC does not establish that the layout has the same electrical connectivity as the schematic.
 
 ### 2.2 Layout Versus Schematic
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 Layout Versus Schematic (LVS) compares the circuit extracted from the physical layout with the schematic reference netlist. It checks whether devices, connections, and relevant device properties correspond. A clean DRC result and a matching LVS result are different checks, and both are required for this verification flow.
 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
 ## Chapter 3 - DRC Issues
 
 ### 3.1 Running DRC in Magic
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Run DRC in the Magic console:
@@ -420,15 +421,17 @@ Review and correct any reported violations, then rerun the checks. The final lay
 
 
 ### 3.2 Reviewing and resolving violations
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 If Magic reports violations, inspect the reported location and rule, correct the geometry, and run the checks again. Common causes include insufficient spacing, narrow shapes, incomplete contact or via enclosure, and incorrect layer overlap. Always rerun DRC after the final layout edit.
 
 The completed layout for this project has zero remaining DRC violations.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
 ## Chapter 4 - LVS
 
 ### 4.1 Layout extraction
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 After DRC, extract the layout circuit in Magic:
@@ -439,14 +442,14 @@ ext2spice lvs
 ext2spice
 ```
 
-Confirm the extracted SPICE file is generated in the expected layout project directory. This extracted netlist is the layout-side input to LVS and post-layout simulation.
+Confirms the extracted SPICE file is generated in the expected layout project directory. This extracted netlist is the layout-side input to LVS and post-layout simulation.
 
 ### 4.2 Running LVS with Netgen
-
+---------------------------------------------------------------------------------------------------------------------------------------------------
 LVS compares the extracted layout netlist against the reference netlist generated by Xschem. Use the correct file paths, subcircuit names, and SKY130A Netgen setup file for your installation.
 
 Example command pattern:
-
+#### Run
 ```bash
 netgen -batch lvs \
   "/home/Sagarikaa1/Lab1_and/mag/inverterr.spice inverterr" \
@@ -455,25 +458,39 @@ netgen -batch lvs \
   /tmp/inverterr_lvs.log
 ```
 
-The filenames and subcircuit names above are examples: change them to match the actual extracted layout netlist and Xschem reference netlist. The layout netlist must be compared with the schematic netlist, not with a testbench netlist.
+
 
 The final Netgen comparison for this project reports that the circuits match uniquely.
 
 <img width="1920" height="1080" alt="Screenshot (1498)" src="https://github.com/user-attachments/assets/fe9eef63-7081-4261-8fc6-e5e0a90f4692" />
 
 
-### 4.3 Post-layout simulation
+### 4.3 Pre-layout vs Post-layout simulation
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Pre-layout matching: The ngspice simulation results matched the expected CMOS inverter behavior, confirming the schematic functionality before physical implementation.
 
-Use the extracted layout SPICE netlist in a simulation testbench. Include the SKY130A model library, apply the same supply and input stimulus used for pre-layout simulation, and ensure the inverter subcircuit name and pin order match the extracted file.
+Post-layout matching: The extracted layout netlist was verified against the original schematic using Netgen, achieving a successful LVS match and confirming the correctness of the physical connections.
 
+For Post- layout simulation, use the extracted layout SPICE netlist in a simulation testbench. Include the SKY130A model library, apply the same supply and input stimulus used for pre-layout simulation, and ensure the inverter subcircuit name and pin order match the extracted file.
+
+#### Run
 ```bash
-ngspice postlayout_tb.spice
+ ngspice inv_post_layout.spice
 ```
 
-Compare the pre-layout and post-layout waveforms. Both should preserve the inverter's complementary input-output logic; the extracted netlist may also represent layout-related parasitic effects, depending on the extraction settings.
+The pre-layout and post-layout waveforms. Both preserve the inverter's complementary input-output logic.
 
-![Pre-layout and post-layout simulation](screenshots/15_pre_vs_post_layout_simulation.png)
+<img width="1912" height="1015" alt="image" src="https://github.com/user-attachments/assets/160f4c8e-0c98-4d06-9bfb-b62a689bddbe" />
 
+
+
+**No. of Data Rows: 4053**
+
+**Observation:**
+- `in` HIGH → `out` LOW 
+- `in` LOW → `out` HIGH 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ### Observations and key learnings
 
 
@@ -481,7 +498,7 @@ Compare the pre-layout and post-layout waveforms. Both should preserve the inver
 - The pre-layout waveform demonstrates the expected complementary input and output behaviour.
 - The final Magic layout has zero remaining DRC violations.
 - Netgen reports a unique match between the extracted layout circuit and the schematic reference.
-- The extracted layout netlist can be used for post-layout simulation and comparison with the schematic-level result.
+- The extracted layout netlist is used for post-layout simulation and comparison with the schematic-level result.
 
 
 
@@ -491,20 +508,8 @@ Compare the pre-layout and post-layout waveforms. Both should preserve the inver
 - **Netgen reports help debugging:** Differences in device and net counts can point to incorrect or missing connections.
 - **Post-layout simulation adds context:** Comparing schematic and extracted-layout waveforms helps identify the impact of layout extraction on circuit behaviour.
 
-## Repository Structure
 
-```text
-SKY130A-Physical-Verification-Project/
-├── README.md
-├── Lab1_inverter/
-│   ├── xschem/       # Schematic, symbol, testbench, reference netlist
-│   ├── mag/          # Magic layout and extracted files
-│   ├── netgen/       # LVS setup and comparison report
-│   └── ngspice/      # Simulation testbenches and waveform data
-└── screenshots/      # Screenshots of the setup, schematic, layout, and results
-```
 
-Keep the actual `.sch`, `.sym`, `.mag`, extracted `.spice`, simulation testbenches, and LVS report in the corresponding folders. Add screenshots using the filenames referenced in this README, or update the image paths to match your filenames. The screenshot links are placeholders until the images are added to the repository.
 
 ## References
 
